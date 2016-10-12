@@ -1,6 +1,7 @@
 var MongoClient = require('mongodb').MongoClient;
 var assert = require('assert');
 var ObjectId = require('mongodb').ObjectID;
+// Use your own mlab user id and password!!!
 var mongourl = 'mongodb://student:password@ds031873.mlab.com:31873/comps381f';
 
 var http = require('http');
@@ -25,9 +26,9 @@ app.post('/upload', function(req, res) {
     MongoClient.connect(mongourl,function(err,db) {
       console.log('Connected to mlab.com');
       assert.equal(null,err);
-      create(db, req.files.sampleFile, function(key) {
+      create(db, req.files.sampleFile, function(result) {
         res.status(200);
-        res.end('Inserted: ' + key)
+        res.end('Inserted: ' + result.insertedId)
         db.close();
       });
     });
@@ -51,39 +52,43 @@ app.get('/download', function(req,res) {
     assert.equal(null,err);
     var bfile;
     var key = req.query.key;
-    read(db, key, function(bfile,mimetype) {
-      if (bfile != null) {
-        console.log('Found: ' + key)
-        res.set('Content-Type',mimetype);
-        res.end(bfile);
-      } else {
-        res.status(404);
-        res.end(key + ' not found!');
-        console.log(key + ' not found!');
-      }
-      db.close();
-    });
+	  if (key != null) {
+      read(db, key, function(bfile,mimetype) {
+        if (bfile != null) {
+          console.log('Found: ' + key)
+          res.set('Content-Type',mimetype);
+          res.end(bfile);
+        } else {
+          res.status(404);
+          res.end(key + ' not found!');
+          console.log(key + ' not found!');
+        }
+        db.close();
+      });
+    } else {
+      res.status(500);
+      res.end('Error: query parameter "key" is missing!');
+    }
   });
 });
 
 function create(db,bfile,callback) {
   console.log(bfile);
-  var key = Math.floor(Date.now() / 1000).toString();
   db.collection('photos').insertOne({
     "data" : new Buffer(bfile.data).toString('base64'),
     "mimetype" : bfile.mimetype,
-    "key" : key
   }, function(err,result) {
     assert.equal(err,null);
-    console.log("Inserted key = " + key);
-    callback(key);
+    console.log("Inserted _id = " + result.insertId);
+    callback(result);
   });
 }
 
 function read(db,target,callback) {
   var bfile = null;
   var mimetype = null;
-  db.collection('photos').findOne({"key": target}, function(err,doc) {
+  //db.collection('photos').findOne({"key": target}, function(err,doc) {
+  db.collection('photos').findOne({"_id": ObjectId(target)}, function(err,doc) {
     assert.equal(err,null);
     if (doc != null) {
       bfile = new Buffer(doc.data,'base64');
