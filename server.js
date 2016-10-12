@@ -1,7 +1,7 @@
 var MongoClient = require('mongodb').MongoClient;
 var assert = require('assert');
 var ObjectId = require('mongodb').ObjectID;
-var mongourl = 'mongodb://rso:password@ds031873.mlab.com:31873/comps381f';
+var mongourl = 'mongodb://student:password@ds031873.mlab.com:31873/comps381f';
 
 var http = require('http');
 var url  = require('url');
