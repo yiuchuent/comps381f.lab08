@@ -4,15 +4,11 @@ var ObjectId = require('mongodb').ObjectID;
 // Use your own mlab user id and password!!!
 var mongourl = 'mongodb://student:password@ds031873.mlab.com:31873/comps381f';
 
-var http = require('http');
-var url  = require('url');
-var fs   = require('fs');
-
 var express = require('express');
 var fileUpload = require('express-fileupload');
 var app = express();
 
-// default options
+// middlewares
 app.use(fileUpload());
 
 app.post('/upload', function(req, res) {
