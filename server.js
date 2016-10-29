@@ -23,9 +23,14 @@ app.post('/upload', function(req, res) {
       console.log('Connected to mlab.com');
       assert.equal(null,err);
       create(db, req.files.sampleFile, function(result) {
-        res.status(200);
-        res.end('Inserted: ' + result.insertedId)
         db.close();
+        if (result.insertedId != null) {
+          res.status(200);
+          res.end('Inserted: ' + result.insertedId)
+        } else {
+          res.status(500);
+          res.end(JSON.stringify(result));
+        }
       });
     });
     /*
@@ -74,8 +79,13 @@ function create(db,bfile,callback) {
     "data" : new Buffer(bfile.data).toString('base64'),
     "mimetype" : bfile.mimetype,
   }, function(err,result) {
-    assert.equal(err,null);
-    console.log("Inserted _id = " + result.insertId);
+    //assert.equal(err,null);
+    if (err) {
+      console.log('insertOne Error: ' + JSON.stringify(err));
+      result = err;
+    } else {
+      console.log("Inserted _id = " + result.insertId);
+    }
     callback(result);
   });
 }
@@ -83,7 +93,6 @@ function create(db,bfile,callback) {
 function read(db,target,callback) {
   var bfile = null;
   var mimetype = null;
-  //db.collection('photos').findOne({"key": target}, function(err,doc) {
   db.collection('photos').findOne({"_id": ObjectId(target)}, function(err,doc) {
     assert.equal(err,null);
     if (doc != null) {
@@ -94,4 +103,6 @@ function read(db,target,callback) {
   });
 }
 
-app.listen(8000, function() {});
+app.listen(8099, function() {
+  console.log('Server is waiting for incoming requests...');
+});
