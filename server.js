@@ -35,7 +35,7 @@ app.post('/upload', function(req, res) {
     });
     /*
     sampleFile = req.files.sampleFile;
-    sampleFile.mv('/somewhere/on/your/server/filename.jpg', function(err) {
+    sampleFile.mv(__dirname + '/somewhere/on/your/server/filename.jpg', function(err) {
         if (err) {
             res.status(500).send(err);
         }
