@@ -1,7 +1,7 @@
 var MongoClient = require('mongodb').MongoClient;
 var assert = require('assert');
 var ObjectId = require('mongodb').ObjectID;
-// Use your own mlab user id and password!!!
+// Use your own mlab account!!!
 var mongourl = 'mongodb://student:password@ds031873.mlab.com:31873/comps381f';
 
 var express = require('express');
@@ -9,7 +9,7 @@ var fileUpload = require('express-fileupload');
 var app = express();
 
 // middlewares
-app.use(fileUpload());
+app.use(fileUpload());   // add 'files' object to req
 
 app.post('/upload', function(req, res) {
     var sampleFile;
