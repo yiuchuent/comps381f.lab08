@@ -3,8 +3,7 @@ var assert = require('assert');
 var ObjectId = require('mongodb').ObjectID;
 var bodyParser = require('body-parser');
 //comment line
-//var multer = require('multer');
-//var upload = multer();
+
 // Use your own mlab account!!!
 var mongourl = 'mongodb://user:user@ds147167.mlab.com:47167/photos';
 //var mongourl = 'mongodb://student:password@ds031873.mlab.com:31873/comps381f';
